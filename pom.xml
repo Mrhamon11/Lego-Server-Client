@@ -8,5 +8,12 @@
     <artifactId>Lego-Server-Client</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>1.11.319</version>
+        </dependency>
+    </dependencies>
 
 </project>
