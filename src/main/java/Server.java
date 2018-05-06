@@ -1,3 +1,7 @@
+import com.amazonaws.auth.AWSCredentialsProviderChain;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.internal.StaticCredentialsProvider;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
@@ -29,7 +33,7 @@ public class Server {
             while((requestNum = bs.readLine()) != null && (setNum = bs.readLine()) != null){ //TODO confirm end of streanm vs. waiting for input
                 int rn = Integer.parseInt(requestNum);
                 int sn = Integer.parseInt(setNum);
-                RequestProcessor processRequest = new RequestProcessor(rn, sn, myWatcher,pw);
+                RequestProcessor processRequest = new RequestProcessor(rn, sn, myWatcher, pw);
                 processRequest.start();
             }
 
@@ -44,8 +48,11 @@ public class Server {
         //TODO make all of this locks
     }
 
-    public static AmazonDynamoDBClient startDynamoClient() {
-        AmazonDynamoDBClientBuilder dynamoDBBuilder = AmazonDynamoDBClient.builder();
-        AmazonDynamoDBClient dynamoDB = dynamoDBBuilder.defaultClient();
+    public static AmazonDynamoDB startDynamoClient() {
+        String username = "AKIAIZ2V3CI757PAQALQ";
+        String password = "/mko5CSG+AemM5OrxLAB2w36mA8VCl8oYB+uLjVx";
+        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(username, password);
+        AWSCredentialsProviderChain credentials = new AWSCredentialsProviderChain(new StaticCredentialsProvider(basicAWSCredentials));
+        return AmazonDynamoDBClientBuilder.standard().withRegion("us-east-2").withCredentials(credentials).build();
     }
 }

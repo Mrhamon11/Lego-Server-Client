@@ -10,7 +10,7 @@ public class Manufacturer extends Thread{
     @Override
     public void run() {
         //TODO Query DynamoDB for set spec
-        foreach(Part in parts) {
+        for(Part in parts) {
             //TODO Obtain part lock
             int partQuantity = 0;
             //TODO Query Dynamo for part quantity
