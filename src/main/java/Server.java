@@ -14,6 +14,7 @@ public class Server {
         AmazonDynamoDBClient dynamoDBClient = startDynamoClient();
         Watcher myWatcher = new Watcher();
         ServerSocket server = null;
+        //Test comment
         Socket clientConnection = null;
         try {
             server = new ServerSocket();
