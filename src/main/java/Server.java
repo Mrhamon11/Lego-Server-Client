@@ -8,17 +8,21 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
     //TODO lots of locks, static (sets, parts)
 
 
     public static void main(String[] args) {
-        makeLocks();
-        AmazonDynamoDBClient dynamoDBClient = startDynamoClient();
-        Watcher myWatcher = new Watcher();
+        Map<String,ReentrantLock> setLocks = new HashMap<>();
+        Map<String,ReentrantLock> partLocks = new HashMap<>();
+        makeLocks(setLocks, partLocks);
+        AmazonDynamoDB dynamoDB = startDynamoClient();
+        Watcher myWatcher = new Watcher(dynamoDB);
         ServerSocket server = null;
-        //Test
         Socket clientConnection = null;
         try {
             server = new ServerSocket();
@@ -34,7 +38,7 @@ public class Server {
             while((requestNum = bs.readLine()) != null && (setNum = bs.readLine()) != null){ //TODO confirm end of streanm vs. waiting for input
                 int rn = Integer.parseInt(requestNum);
                 int sn = Integer.parseInt(setNum);
-                RequestProcessor processRequest = new RequestProcessor(rn, sn, myWatcher, pw);
+                RequestProcessor processRequest = new RequestProcessor(rn, sn, myWatcher, pw, dynamoDB);
                 processRequest.start();
             }
 
@@ -45,8 +49,25 @@ public class Server {
         }
     }
 
-    public static void makeLocks() {
-        //TODO make all of this locks
+    public static void makeLocks(Map<String,ReentrantLock> setLocks, Map<String,ReentrantLock> partLocks) {
+        try(FileReader frParts = new FileReader("parts.txt");
+            FileReader frSets = new FileReader("sets.txt");
+            BufferedReader partReader = new BufferedReader(frParts);
+            BufferedReader setReader = new BufferedReader(frSets)
+            ) {
+            String partNum;
+            String setNum;
+            while((partNum = partReader.readLine()) != null) {
+                partLocks.put(partNum, new ReentrantLock());
+            }
+            while((setNum = setReader.readLine()) != null) {
+                setLocks.put(setNum, new ReentrantLock());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static AmazonDynamoDB startDynamoClient() {

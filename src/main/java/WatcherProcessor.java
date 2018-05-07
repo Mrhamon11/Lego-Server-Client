@@ -1,12 +1,16 @@
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class WatcherProcessor extends Thread{
     private Watcher myWatcher;
+    private AmazonDynamoDB dynamo;
 
-    public WatcherProcessor(Watcher myWatcher){
+    public WatcherProcessor(Watcher myWatcher, AmazonDynamoDB dynamo){
         this.myWatcher = myWatcher;
+        this.dynamo = dynamo;
     }
 
     @Override

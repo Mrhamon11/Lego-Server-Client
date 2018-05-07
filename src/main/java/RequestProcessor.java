@@ -1,3 +1,5 @@
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -6,12 +8,14 @@ public class RequestProcessor extends Thread {
     private int setNumber;
     private Watcher myWatcher;
     private PrintWriter clientWriter;
+    private AmazonDynamoDB dynamo;
 
-    public RequestProcessor(int requestNumber, int setNumber, Watcher myWatcher, PrintWriter pw) {
+    public RequestProcessor(int requestNumber, int setNumber, Watcher myWatcher, PrintWriter pw, AmazonDynamoDB dynamo) {
         this.requestNumber = requestNumber;
         this.setNumber = setNumber;
         this.myWatcher = myWatcher;
         this.clientWriter = pw;
+        this.dynamo = dynamo;
     }
 
     @Override

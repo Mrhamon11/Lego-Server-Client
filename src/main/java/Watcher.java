@@ -1,3 +1,5 @@
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -6,8 +8,8 @@ public class Watcher {
     private final LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
     private final Set<Integer> activeManufacture = new HashSet<>();
 
-    public Watcher() {
-        WatcherProcessor watcherThread = new WatcherProcessor(this);
+    public Watcher(AmazonDynamoDB dynamo) {
+        WatcherProcessor watcherThread = new WatcherProcessor(this, dynamo);
         watcherThread.start();
     }
 
