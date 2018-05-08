@@ -1,25 +1,30 @@
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Watcher {
-    private final LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
-    private final Set<Integer> activeManufacture = new HashSet<>();
+    private final LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private final Set<String> activeManufacture = new HashSet<>();
+    private Map<String,ReentrantLock> partLocks;
+    private Map<String,ReentrantLock> setLocks;
 
-    public Watcher(AmazonDynamoDB dynamo) {
-        WatcherProcessor watcherThread = new WatcherProcessor(this, dynamo);
+    public Watcher(AmazonDynamoDB dynamo, Map<String,ReentrantLock> partLocks, Map<String,ReentrantLock> setLocks) {
+        WatcherProcessor watcherThread = new WatcherProcessor(this, dynamo, partLocks, setLocks);
         watcherThread.start();
+        this.partLocks = partLocks;
+        this.setLocks = setLocks;
     }
 
 
-    public synchronized void addToQueue(int setNumber) {
+    public synchronized void addToQueue(String setNumber) {
         this.queue.offer(setNumber);
         this.queue.notify();
     }
 
-    public synchronized int popFromQueue() {
+    public synchronized String popFromQueue() {
         if(this.queue.isEmpty()) {
             try {
                 this.queue.wait();
@@ -30,15 +35,15 @@ public class Watcher {
         return this.queue.poll();
     }
 
-    public synchronized void addToActiveManufacture(int setNumber) {
+    public synchronized void addToActiveManufacture(String setNumber) {
         this.activeManufacture.add(setNumber);
     }
 
-    public synchronized boolean checkActiveManufacture(int setNumber) {
+    public synchronized boolean checkActiveManufacture(String setNumber) {
         return this.activeManufacture.contains(setNumber);
     }
 
-    public synchronized void removeFromActiveManufacture(int setNumber) {
+    public synchronized void removeFromActiveManufacture(String setNumber) {
         this.activeManufacture.remove(setNumber);
     }
 }

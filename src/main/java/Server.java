@@ -37,8 +37,7 @@ public class Server {
             String setNum = "";
             while((requestNum = bs.readLine()) != null && (setNum = bs.readLine()) != null){ //TODO confirm end of streanm vs. waiting for input
                 int rn = Integer.parseInt(requestNum);
-                int sn = Integer.parseInt(setNum);
-                RequestProcessor processRequest = new RequestProcessor(rn, sn, myWatcher, pw, dynamoDB);
+                RequestProcessor processRequest = new RequestProcessor(rn, setNum, myWatcher, pw, dynamoDB, setLocks);
                 processRequest.start();
             }
 
