@@ -11,7 +11,7 @@ public class Watcher {
     private Map<String,ReentrantLock> partLocks;
     private Map<String,ReentrantLock> setLocks;
 
-    public Watcher(AmazonDynamoDB dynamo, Map<String,ReentrantLock> partLocks, Map<String,ReentrantLock> setLocks) {
+    public Watcher(DynamoWrapper dynamo, Map<String,ReentrantLock> partLocks, Map<String,ReentrantLock> setLocks) {
         WatcherProcessor watcherThread = new WatcherProcessor(this, dynamo, partLocks, setLocks);
         watcherThread.start();
         this.partLocks = partLocks;

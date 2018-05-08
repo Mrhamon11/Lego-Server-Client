@@ -20,8 +20,8 @@ public class Server {
         Map<String,ReentrantLock> setLocks = new HashMap<>();
         Map<String,ReentrantLock> partLocks = new HashMap<>();
         makeLocks(setLocks, partLocks);
-        AmazonDynamoDB dynamoDB = startDynamoClient();
-        Watcher myWatcher = new Watcher(dynamoDB);
+        DynamoWrapper dynamoDB = new DynamoWrapper();
+        Watcher myWatcher = new Watcher(dynamoDB, partLocks, setLocks);
         ServerSocket server = null;
         Socket clientConnection = null;
         try {
@@ -69,11 +69,4 @@ public class Server {
         }
     }
 
-    public static AmazonDynamoDB startDynamoClient() {
-        String username = "AKIAIZ2V3CI757PAQALQ";
-        String password = "/mko5CSG+AemM5OrxLAB2w36mA8VCl8oYB+uLjVx";
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(username, password);
-        AWSCredentialsProviderChain credentials = new AWSCredentialsProviderChain(new StaticCredentialsProvider(basicAWSCredentials));
-        return AmazonDynamoDBClientBuilder.standard().withRegion("us-east-2").withCredentials(credentials).build();
-    }
 }

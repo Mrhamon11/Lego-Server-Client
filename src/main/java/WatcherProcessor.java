@@ -4,11 +4,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class WatcherProcessor extends Thread{
     private Watcher myWatcher;
-    private AmazonDynamoDB dynamo;
+    private DynamoWrapper dynamo;
     private Map<String,ReentrantLock> partLocks;
     private Map<String,ReentrantLock> setLocks;
+    private static final int inventoryThreshold = 50;
 
-    public WatcherProcessor(Watcher myWatcher, AmazonDynamoDB dynamo, Map<String,ReentrantLock> partLocks, Map<String,ReentrantLock> setLocks){
+    public WatcherProcessor(Watcher myWatcher, DynamoWrapper dynamo, Map<String,ReentrantLock> partLocks, Map<String,ReentrantLock> setLocks){
         this.myWatcher = myWatcher;
         this.dynamo = dynamo;
         this.partLocks = partLocks;
@@ -20,11 +21,10 @@ public class WatcherProcessor extends Thread{
         while(true){
             String setNumber = this.myWatcher.popFromQueue();
             if(!myWatcher.checkActiveManufacture(setNumber)) {
-                int currentQuantity = 0;
                 setLocks.get(setNumber).lock();
-                //TODO query DynamoDB
+                int currentQuantity = dynamo.getSetInventory(setNumber);
                 setLocks.get(setNumber).unlock();
-                if(currentQuantity < threshold) {//TODO make config file of constants
+                if(currentQuantity < inventoryThreshold) {
                     myWatcher.addToActiveManufacture(setNumber);
                     Manufacturer manufactureSet = new Manufacturer(myWatcher, setNumber, dynamo, partLocks, setLocks);
                     manufactureSet.start();
