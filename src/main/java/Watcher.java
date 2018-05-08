@@ -19,17 +19,21 @@ public class Watcher {
     }
 
 
-    public synchronized void addToQueue(String setNumber) {
-        this.queue.offer(setNumber);
-        this.queue.notify();
+    public void addToQueue(String setNumber) {
+        synchronized (this.queue) {
+            this.queue.offer(setNumber);
+            this.queue.notify();
+        }
     }
 
-    public synchronized String popFromQueue() {
-        if(this.queue.isEmpty()) {
-            try {
-                this.queue.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public String popFromQueue() {
+        synchronized(this.queue) {
+            if (this.queue.isEmpty()) {
+                try {
+                    this.queue.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return this.queue.poll();

@@ -25,7 +25,7 @@ public class Server {
         ServerSocket server = null;
         Socket clientConnection = null;
         try {
-            server = new ServerSocket();
+            server = new ServerSocket(395);
             clientConnection = server.accept();
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,6 +37,7 @@ public class Server {
             String setNum = "";
             while((requestNum = bs.readLine()) != null && (setNum = bs.readLine()) != null){ //TODO confirm end of streanm vs. waiting for input
                 int rn = Integer.parseInt(requestNum);
+                System.out.println("Creating new processor for request " + rn);
                 RequestProcessor processRequest = new RequestProcessor(rn, setNum, myWatcher, pw, dynamoDB, setLocks);
                 processRequest.start();
             }

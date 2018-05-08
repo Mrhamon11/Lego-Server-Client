@@ -47,6 +47,7 @@ public class RequestProcessor extends Thread {
     }
 
     public synchronized void writeToClient() {
+        System.out.println("writing to client");
         String clientResponse = "Request " + requestNumber + " has been fulfilled. Your order of set " + setNumber + " has shipped.";
         clientWriter.println(clientResponse);
     }
