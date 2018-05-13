@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
-    //TODO lots of locks, static (sets, parts)
-
 
     public static void main(String[] args) {
         Map<String,ReentrantLock> setLocks = new HashMap<>();
