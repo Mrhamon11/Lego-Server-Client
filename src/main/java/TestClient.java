@@ -6,7 +6,7 @@ public class TestClient {
     public static void main(String[] args) {
         try(Socket connect = new Socket("localhost", 395);
             OutputStream os = connect.getOutputStream();
-            PrintWriter pw = new PrintWriter(os);
+            PrintWriter pw = new PrintWriter(os, true);
             InputStreamReader isr = new InputStreamReader(connect.getInputStream());
             BufferedReader br = new BufferedReader(isr);
             ){
