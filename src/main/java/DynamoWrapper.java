@@ -16,8 +16,8 @@ public class DynamoWrapper {
     private AmazonDynamoDB dynamo;
 
     public DynamoWrapper() {
-        String username = "AKIAIZ2V3CI757PAQALQ";
-        String password = "/mko5CSG+AemM5OrxLAB2w36mA8VCl8oYB+uLjVx";
+        String username = "";
+        String password = "";
         BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(username, password);
         AWSCredentialsProviderChain credentials = new AWSCredentialsProviderChain(new StaticCredentialsProvider(basicAWSCredentials));
         this.dynamo = AmazonDynamoDBClientBuilder.standard().withRegion("us-east-2").withCredentials(credentials).build();
@@ -34,7 +34,7 @@ public class DynamoWrapper {
         Map<String, AttributeValue> testGetMap = new HashMap<>();
         testGetMap.put("set_num", new AttributeValue(setNumber));
         GetItemRequest testGet = new GetItemRequest("sets", testGetMap);
-        return Integer.parseInt(dynamo.getItem(testGet).getItem().get("Number").getS());
+        return Integer.parseInt(dynamo.getItem(testGet).getItem().get("Number").getN());
     }
 
     public synchronized List<Part> getSetSpec(String setNumber) {

@@ -47,7 +47,4 @@ public class Manufacturer extends Thread{
         myWatcher.removeFromActiveManufacture(setNumber);
 
     }
-
-
-
 }
